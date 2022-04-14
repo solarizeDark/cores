@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: files-service
+  datasource:
+    username: postgres
+    password: p2s28
+    url: jdbc:postgresql://localhost:5432/basics
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true

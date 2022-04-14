@@ -1,0 +1,22 @@
+POST http://localhost:8080/save
+Content-Type: application/json
+
+{
+  "name": "Wulla",
+  "population": 500000,
+  "mayor": {
+    "name": "Olly",
+    "surname": "Ully"
+  },
+
+  "cityHall": {
+    "name": "Kremlin",
+    "address": "Central"
+  }
+}
+
+###
+
+GET http://localhost:8080/get/16
+
+
