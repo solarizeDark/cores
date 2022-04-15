@@ -1,11 +1,13 @@
 package ru.fedusiv.files_server.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import ru.fedusiv.files_server.entities.converters.CityHallConverter;
 import ru.fedusiv.files_server.entities.listeners.CityListener;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -50,5 +52,14 @@ public class City {
     @Convert(converter = CityHallConverter.class)
     @Column(unique = true)
     private CityHall cityHall;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "city",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL
+    )
+    @JsonIgnoreProperties("city")
+    private Set<VehicleService> vehicleServices;
 
 }
