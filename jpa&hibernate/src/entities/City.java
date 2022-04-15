@@ -13,7 +13,11 @@ import javax.persistence.*;
 @Builder
 @Entity
 @DynamicInsert
-@Table(name = "cities")
+@Table(name = "cities",
+        uniqueConstraints = {
+            @UniqueConstraint(name = "country_city_unique", columnNames = {"country", "name"})
+        }
+)
 @EntityListeners(CityListener.class)
 public class City {
 
@@ -40,9 +44,11 @@ public class City {
         @AttributeOverride( name = "name", column = @Column(name = "mayor_name", nullable = false)),
         @AttributeOverride( name = "surname", column = @Column(name = "mayor_surname")),
     })
+    @Column(unique = true)
     private Mayor mayor;
 
     @Convert(converter = CityHallConverter.class)
+    @Column(unique = true)
     private CityHall cityHall;
 
 }

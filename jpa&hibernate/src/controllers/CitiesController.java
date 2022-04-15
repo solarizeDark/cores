@@ -19,8 +19,7 @@ public class CitiesController {
 
     @GetMapping("/get/{id}")
     public City getById(@PathVariable("id") Long id) {
-        City city = citiesRepository.getById(id);
-        return city;
+        return citiesRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 
 }
