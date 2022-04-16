@@ -2,15 +2,17 @@ package ru.fedusiv.files_server.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
+@Data
 @Table(name = "tech_maintenance_stations")
 public class TechMaintenanceStation {
 
@@ -26,6 +28,6 @@ public class TechMaintenanceStation {
     private String address;
 
     @ManyToMany(mappedBy = "techMaintenanceStations")
-    private Set<VehicleService> vehicleServices;
+    private List<VehicleService> vehicleServices;
 
 }

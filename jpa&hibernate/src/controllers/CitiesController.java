@@ -23,7 +23,6 @@ public class CitiesController {
 
     @GetMapping("/get/{id}")
     public ResponseEntity<City> getById(@PathVariable("id") Long id) {
-        City city = citiesRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         return new ResponseEntity<>(citiesRepository.findById(id).orElseThrow(IllegalArgumentException::new),
                         HttpStatus.OK);
     }

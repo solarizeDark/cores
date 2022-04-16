@@ -1,6 +1,8 @@
 package ru.fedusiv.files_server.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import ru.fedusiv.files_server.entities.converters.CityHallConverter;
@@ -21,6 +23,9 @@ import java.util.Set;
         }
 )
 @EntityListeners(CityListener.class)
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class City {
 
     @Id
