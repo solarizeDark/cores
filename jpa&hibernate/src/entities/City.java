@@ -1,5 +1,6 @@
 package ru.fedusiv.files_server.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -13,7 +14,8 @@ import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 @DynamicInsert
@@ -64,7 +66,6 @@ public class City {
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL
     )
-    @JsonIgnoreProperties("city")
     private Set<VehicleService> vehicleServices;
 
 }

@@ -13,12 +13,10 @@ public class TechMaintenanceStationDto {
 
     private Long id;
     private String address;
-    private List<VehicleServiceDto> vehicleServiceDtos;
 
     public static TechMaintenanceStationDto of(TechMaintenanceStation techMaintenanceStation) {
         return TechMaintenanceStationDto.builder()
                 .id(techMaintenanceStation.getId())
-                .vehicleServiceDtos(VehicleServiceDto.of(techMaintenanceStation.getVehicleServices()))
                 .address(techMaintenanceStation.getAddress())
                 .build();
     }

@@ -6,12 +6,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import ru.fedusiv.files_server.dtos.TechMaintenanceStationDto;
 import ru.fedusiv.files_server.dtos.VehicleServiceDto;
-import ru.fedusiv.files_server.entities.TechMaintenanceStation;
 import ru.fedusiv.files_server.entities.VehicleService;
 import ru.fedusiv.files_server.repositories.VehicleServicesRepository;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 public class VehiclesServicesController {
@@ -32,6 +30,12 @@ public class VehiclesServicesController {
                                 .findById(id)
                                 .orElseThrow(IllegalArgumentException::new)
                         ).getTechMaintenanceStationDtos();
+    }
+
+    @GetMapping("/vh/get/all")
+    public List<VehicleServiceDto> getAllVehicleServices() {
+        List<VehicleServiceDto> v = VehicleServiceDto.of(vehicleServicesRepository.findAll());
+        return v;
     }
 
 

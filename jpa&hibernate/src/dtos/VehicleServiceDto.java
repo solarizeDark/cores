@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class VehicleServiceDto {
 
     private Long id;
-    private City city;
+    private CityDto city;
     private String vehiclesAmount;
     private VehicleService.Type type;
     private List<TechMaintenanceStationDto> techMaintenanceStationDtos;
@@ -22,7 +22,7 @@ public class VehicleServiceDto {
 
         return VehicleServiceDto.builder()
                 .id(vehicleService.getId())
-                .city(vehicleService.getCity())
+                .city(CityDto.of(vehicleService.getCity()))
                 .techMaintenanceStationDtos(
                         TechMaintenanceStationDto.of(
                                 vehicleService.getTechMaintenanceStations()))

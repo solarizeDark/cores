@@ -15,19 +15,18 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
 public class CityDto {
 
     private String name;
     private String country;
     private Integer population;
-    private Set<VehicleService> vehicleServices;
 
     public static CityDto of(City city) {
         return CityDto.builder()
                 .name(city.getName())
                 .country(city.getCountry())
                 .population(city.getPopulation())
-                .vehicleServices(city.getVehicleServices())
                 .build();
     }
 
