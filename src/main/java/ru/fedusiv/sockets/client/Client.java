@@ -46,7 +46,7 @@ public class Client {
     public void send (PrintWriter socketOut) {
         Scanner scanner = new Scanner(System.in);
         String consoleInput;
-        while ((consoleInput = scanner.next()) != null) {
+        while ((consoleInput = scanner.nextLine()) != null) {
             socketOut.println(consoleInput);
         }
     }

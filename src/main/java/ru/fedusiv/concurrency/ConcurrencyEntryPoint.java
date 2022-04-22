@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class ConcurrencyEnterPoint {
+public class ConcurrencyEntryPoint {
 
     static Consumer<URL> imageDownloader =
         url ->
