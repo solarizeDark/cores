@@ -1,7 +1,7 @@
 package ru.fedusiv.sockets.server;
 
-import org.apache.commons.collections4.OrderedMap;
-import org.apache.commons.collections4.map.LinkedMap;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,18 +9,34 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
 
-    private final OrderedMap<String, String> messages = new LinkedMap<>();
-    private Map.Entry<String, String> last;
-    private AtomicInteger clientsAmount = new AtomicInteger(0);
-    private AtomicInteger currentSize = new AtomicInteger(0);
-    private ExecutorService executorService = Executors.newFixedThreadPool(5);
+    @Data
+    @AllArgsConstructor
+    public class Message {
+
+        // client id
+        private String clientId;
+        private String message;
+
+    }
+
+
+    private final AtomicInteger clientsAmount = new AtomicInteger(0);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
+    private List<Message> messages = new ArrayList<>();
+    private final Map<String, Integer> counters = new HashMap<>();
+    private final Lock messagesLock = new ReentrantLock();
 
     public void openSocket(Integer port) {
         ServerSocket serverSocket = null;
@@ -33,16 +49,17 @@ public class Server {
             Socket newClient;
             while ((newClient = serverSocket.accept()) != null) {
                 Socket finalNewClient = newClient;
+                String alias = "Client".concat(String.valueOf(clientsAmount.get()));
+                clientsAmount.incrementAndGet();
+                System.out.println(alias);
                 executorService.submit(() -> {
                     try {
-                        handleClient(finalNewClient);
-                        clientsAmount.incrementAndGet();
+                        handleClient(finalNewClient, alias);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 });
             }
-
 
         } catch (IOException exception) {
             System.err.println(exception);
@@ -57,43 +74,54 @@ public class Server {
         }
     }
 
-    public void handleClient(Socket socket) throws IOException {
-        String alias = "Client".concat(String.valueOf(clientsAmount.get()));
-
+    public void handleClient(Socket socket, String alias) throws IOException {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
 
-        synchronized (messages) {
-            for (Map.Entry<String, String> entry : messages.entrySet()) {
-                out.println(entry.getKey().concat(": ").concat(entry.getValue()));
-                last = entry;
-            }
+        int current;
+        try {
+            messagesLock.lock();
+            current = messages.size();
+            counters.put(alias, current);
 
-            currentSize.set(messages.size());
+            messages.subList(0, current).forEach(System.out::println);
+
+            for (Message message : messages.subList(0, current)) {
+                out.println(message.getClientId() + ": " + message.getMessage());
+            }
+        } finally {
+            messagesLock.unlock();
         }
 
-        System.out.println("initial sent");
-        executorService.submit(() -> sendToClient(out));
+//        executorService.submit(() -> sendToClient(out, alias));
 
         String input;
+
         while ((input = bufferedReader.readLine()) != null) {
             System.out.println(input);
-
-            messages.put(alias, input);
+            Message message = new Message(alias, input);
+            try {
+                messagesLock.lock();
+                messages.add(message);
+                System.out.println("m");
+                messages.forEach(System.out::println);
+            } finally {
+                messagesLock.unlock();
+            }
         }
     }
 
-    public void sendToClient(PrintWriter out) {
-        while (true) {
-            synchronized (messages) {
-                int current = currentSize.get();
-                if (current < messages.size()) {
-                    for (String key = messages.nextKey(last.getKey());
-                         key != messages.nextKey(messages.lastKey()); key = messages.nextKey(key)) {
-                        out.println(key.concat(": ").concat(messages.get(key)));
-                    }
-                }
+    public void sendToClient(PrintWriter out, String alias) {
+        int current;
+        synchronized (counters) {
+            current = counters.get(alias);
+        }
+        while (current < messages.size()) {
+            int old = current;
+            current = messages.size();
+            for (Message message : messages.subList(old, current)) {
+                out.println(message.getClientId() + ": " + message.getMessage());
             }
         }
     }
